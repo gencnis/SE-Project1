@@ -65,13 +65,14 @@ public class Vid extends JFrame {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                BufferedImage img = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
+                BufferedImage image = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
+                Graphics2D g2 = image.createGraphics();
+                canvas.paint(g2);
                 try {
-                    ImageIO.write(img, "png", new File("myFile.png"));
-                } catch (Exception ex) {
-                    System.out.println(ex);
+                    ImageIO.write(image, "png", new File("myArt.png"));
+                } catch (IOException o) {
+                    o.printStackTrace();
                 }
-            }
         });
         resetButton = new CustomButton("Clear", 120, 30, Color.red, Color.BLACK);
         resetButton.addActionListener(new ActionListener() {
