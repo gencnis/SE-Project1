@@ -549,9 +549,9 @@ public class Vid extends JFrame{
         gridPanel.setLayout(new GridLayout(15, 1, 20, 1));
 
         // Here i add all of items to that grid panel on the right side of the screen
-        gridPanel.add(penButton);
-        gridPanel.add(shapesPanel);
-        gridPanel.add(magicWandButton);
+        gridPanel.add(penButton); // adds pen button to the side panel
+        gridPanel.add(shapesPanel); // adds shapes button panel to the side panel
+        gridPanel.add(magicWandButton); // adds magic wand button to the side panel
         gridPanel.add(rgbLabel);
         gridPanel.add(labelR);
         gridPanel.add(sliderR);
