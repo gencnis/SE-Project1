@@ -1,3 +1,12 @@
+/***
+This class is made so we can put all of the shapes in it, and then redraw them. This way we save all of the lines in it and then redraw them.
+If you'd want to add new shapes, make sure to add them to the ArrayList of all shapes in Vid.java
+that way they get called and cleared.
+
+*/
+
+
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
