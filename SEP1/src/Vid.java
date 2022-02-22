@@ -17,18 +17,22 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serial;
+import java.util.ArrayList;
 
 
-public class Vid extends JFrame {
+public class Vid extends JFrame{
     @Serial
     private static final long serialVersionUID = 1L;
 
 
-    private Canvas canvas;
+    public Canvas canvas;
     private JPanel previewPenColor;
     private CustomSlider sliderPenSize;
     private CustomSlider sliderR;
@@ -43,21 +47,16 @@ public class Vid extends JFrame {
     CustomButton saveButton;
     CustomButton resetButton;
     CustomButton saveButtonPNG;
-    CustomButton redButton;
-    CustomButton greenButton;
-    CustomButton blueButton;
-    CustomButton blackButton;
-    CustomButton orangeButton;
-    CustomButton lightGrayButton;
-    CustomButton yellowButton;
-    CustomButton magentaButton;
-    CustomButton cyanButton;
-    CustomButton darkGrayButton;
-    CustomButton magicWandButton;
+    CustomButton lineDraw;
+    CustomButton textDraw;
+    CustomButton importButton;
+    CustomButton restoreButton;
 
-    // CustomButton printButton;
+
+    Canvas getCanvas(){
+        return canvas;
+    }
     // CustomButton shareButton;
-
 
     /***
      *
@@ -87,6 +86,61 @@ public class Vid extends JFrame {
         //slider for the pren size
         sliderPenSize = new CustomSlider(0, 50, 0, 10, 20, false);
 
+
+        restoreButton = new CustomButton("Restore Last", 120, 30, Color.DARK_GRAY, Color.BLACK);
+        restoreButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                canvas.restoreLast();
+            }
+        });
+
+        importButton = new CustomButton("Import Image", 120, 30, Color.DARK_GRAY, Color.BLACK);
+        importButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String path = "";
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                int result = fileChooser.showOpenDialog(canvas);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+                    path = selectedFile.getAbsolutePath();
+                }
+                BufferedImage myPicture = null;
+                try {
+                    myPicture = ImageIO.read(new File(path));
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+                JLabel picLabel = new JLabel(new ImageIcon(myPicture));
+                picLabel.setOpaque(true);
+                add(picLabel);
+            }
+        });
+
+
+        textDraw = new CustomButton("Write Text", 120, 30, Color.DARK_GRAY, Color.BLACK);
+        textDraw.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String input = JOptionPane.showInputDialog(null, "ENTER WHAT YOU WANT TO WRITE");
+                Integer xCoo = Integer.parseInt(JOptionPane.showInputDialog(null, "ENTER X COORDINATE"));
+                Integer yCoo = Integer.parseInt(JOptionPane.showInputDialog(null, "ENTER y COORDINATE"));
+                canvas.text(input, xCoo, yCoo);
+            }
+        });
+
+        lineDraw = new CustomButton("draw a Line", 120, 30, Color.DARK_GRAY, Color.BLACK);
+        lineDraw.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                canvas.line();
+            }
+        });
+
+
         /**
          *
          * This is for the save button
@@ -96,7 +150,7 @@ public class Vid extends JFrame {
          * You will see me duplicating this same function 3 times to try and save it under multiple formats
          */
         // instantiate your button
-        saveButton = new CustomButton("Save As JPG", 120, 30, Color.LIGHT_GRAY, Color.BLACK);
+        saveButton = new CustomButton("Save As JPEG", 120, 30, Color.DARK_GRAY, Color.BLACK);
         //here you're adding the action listener (basically the funcionality of the button: what you want it to do.)
         saveButton.addActionListener(new ActionListener() {
             @Override
@@ -109,7 +163,7 @@ public class Vid extends JFrame {
                 canvas.paint(g2);
                 try {
                     // here we try to save the image under a png file
-                    ImageIO.write(image, "jpg", new File("myArt.jpg"));
+                    ImageIO.write(image, "jpeg", new File("myArt.jpeg"));
                 } catch (IOException o) {
                     o.printStackTrace();
                 }
@@ -117,7 +171,7 @@ public class Vid extends JFrame {
         });
 
         // instantiate your button
-        saveButtonPNG = new CustomButton("Save As PNG", 150, 30, Color.LIGHT_GRAY, Color.BLACK);
+        saveButtonPNG = new CustomButton("Save As PNG", 120, 30, Color.DARK_GRAY, Color.BLACK);
         //here you're adding the action listener (basically the functionality of the button: what you want it to do.)
         saveButtonPNG.addActionListener(new ActionListener() {
             @Override
@@ -138,184 +192,13 @@ public class Vid extends JFrame {
         });
 
         // reset button to clean up the canvas and reset it to white
-        resetButton = new CustomButton("Clear", 120, 30, new Color(255,97,97), Color.BLACK);
+        resetButton = new CustomButton("Clear", 120, 30, Color.RED, Color.BLACK);
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 canvas.resetArea();
             }
         });
-
-        //NISA
-        // instantiate your button
-        redButton = new CustomButton("", 30, 30, Color.RED , Color.RED);
-        // The change listener to the Red color slider
-        redButton.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                // sets it
-                canvas.setPenColor(new Color(255,0,0));
-                // displays the color on the preview panel
-                previewPenColor.setBackground(new Color(255,0,0));
-
-                sliderR.setValue(255);
-                sliderG.setValue(0);
-                sliderB.setValue(0);
-            }
-        });
-
-        greenButton = new CustomButton("GREEN", 30, 30, Color.GREEN, Color.GREEN);
-        // The change listener to the Green color slider
-        greenButton.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                // sets it
-                canvas.setPenColor(new Color(0,255,0));
-                // displays the color on the preview panel
-                previewPenColor.setBackground(new Color(0,255,0));
-
-                sliderR.setValue(0);
-                sliderG.setValue(255);
-                sliderB.setValue(0);
-            }
-        });
-
-        blueButton = new CustomButton("BLUE", 30, 30, Color.BLUE, Color.BLUE);
-        // The change listener to the Blue color slider
-        blueButton.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                // sets it
-                canvas.setPenColor(new Color(0,0,255));
-                // displays the color on the preview panel
-                previewPenColor.setBackground(new Color(0,0,255));
-
-                sliderR.setValue(0);
-                sliderG.setValue(0);
-                sliderB.setValue(255);
-            }
-        });
-
-        blackButton = new CustomButton("BLACK", 30, 30, Color.BLACK, Color.BLACK);
-        // The change listener to the black color slider
-        blackButton.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                // sets it
-                canvas.setPenColor(new Color(0,0,0));
-                // displays the color on the preview panel
-                previewPenColor.setBackground(new Color(0,0,0));
-
-                sliderR.setValue(0);
-                sliderG.setValue(0);
-                sliderB.setValue(0);
-            }
-        });
-
-        orangeButton = new CustomButton("ORANGE", 30, 30, Color.ORANGE, Color.ORANGE);
-        // The change listener to the orange color slider
-        orangeButton.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                // sets it
-                canvas.setPenColor(new Color(255,200,0));
-                // displays the color on the preview panel
-                previewPenColor.setBackground(new Color(255,200,0));
-
-                sliderR.setValue(255);
-                sliderG.setValue(200);
-                sliderB.setValue(0);
-            }
-        });
-
-        lightGrayButton = new CustomButton("LIGHT GRAY", 30, 30, Color.LIGHT_GRAY, Color.LIGHT_GRAY);
-        // The change listener to the light gray color slider
-        lightGrayButton.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                // sets it
-                canvas.setPenColor(new Color(192,192,192));
-                // displays the color on the preview panel
-                previewPenColor.setBackground(new Color(192,192,192));
-
-                sliderR.setValue(192);
-                sliderG.setValue(192);
-                sliderB.setValue(192);
-            }
-        });
-
-        yellowButton = new CustomButton("YELLOW", 30, 30, Color.YELLOW, Color.YELLOW);
-        // The change listener to the yellow color slider
-        yellowButton.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                // sets it
-                canvas.setPenColor(new Color(255,255,0));
-                // displays the color on the preview panel
-                previewPenColor.setBackground(new Color(255,255,0));
-
-                sliderR.setValue(255);
-                sliderG.setValue(255);
-                sliderB.setValue(0);
-            }
-        });
-
-        magentaButton = new CustomButton("MAGENTA", 30, 30, Color.MAGENTA, Color.MAGENTA);
-        // The change listener to the magenta color slider
-        magentaButton.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                // sets it
-                canvas.setPenColor(new Color(255,0,255));
-                // displays the color on the preview panel
-                previewPenColor.setBackground(new Color(255,0,255));
-
-
-                sliderR.setValue(255);
-                sliderG.setValue(0);
-                sliderB.setValue(255);
-            }
-        });
-
-        cyanButton = new CustomButton("CYAN", 30, 30, Color.CYAN, Color.CYAN);
-        // The change listener to the cyan color slider
-        cyanButton.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                // sets it
-                canvas.setPenColor(new Color(0,255,255));
-                // displays the color on the preview panel
-                previewPenColor.setBackground(new Color(0,255,255));
-
-                sliderR.setValue(0);
-                sliderG.setValue(255);
-                sliderB.setValue(255);
-            }
-        });
-
-        darkGrayButton = new CustomButton("DARK GRAY", 30, 30, Color.DARK_GRAY, Color.DARK_GRAY);
-        // The change listener to the dark gray color slider
-        darkGrayButton.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                // sets it
-                canvas.setPenColor(new Color(64,64,64));
-                // displays the color on the preview panel
-                previewPenColor.setBackground(new Color(64,64,64));
-
-                sliderR.setValue(64);
-                sliderG.setValue(64);
-                sliderB.setValue(64);
-            }
-        });
-
-        // This is basically a white color box, but we can use it to do the magic wand
-        magicWandButton = new CustomButton("MAGIC WAND", 150, 30, Color.WHITE, Color.BLACK);
-        // The change listener to the white color slider
-        magicWandButton.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                // sets it
-                canvas.setPenColor(Color.WHITE);
-                // displays the color on the preview panel
-                previewPenColor.setBackground(Color.WHITE);
-
-                sliderR.setValue(255);
-                sliderG.setValue(255);
-                sliderB.setValue(255);
-            }
-        });
-
-        //NISA
 
         // The RGB sliders default values
         R = sliderR.getValue();
@@ -384,7 +267,7 @@ public class Vid extends JFrame {
             }
         });
 
-        // The change listener to the Green color slider
+        // The change listener to the Blue color slider
 
         sliderB.addChangeListener(new ChangeListener() {
             @Override
@@ -404,35 +287,28 @@ public class Vid extends JFrame {
             }
         });
 
+
+
         // creates a new  top panel
         JPanel topPanel = new JPanel();
         // aligns it
         topPanel.setLayout(new FlowLayout(5));
-        //NISA TODO
-
-        // Top panel default color buttons
-        topPanel.add(redButton);
-        topPanel.add(greenButton);
-        topPanel.add(blueButton);
-        topPanel.add(blackButton);
-        topPanel.add(orangeButton);
-        topPanel.add(lightGrayButton);
-        topPanel.add(yellowButton);
-        topPanel.add(magentaButton);
-        topPanel.add(cyanButton);
-        topPanel.add(darkGrayButton);
-
-        topPanel.add(magicWandButton);
-
-        //NISA TODO
         // adding the JPG save button
         topPanel.add(saveButton);
         // adding the PNG save button
         topPanel.add(saveButtonPNG);
         // adding the reset the canvas button
         topPanel.add(resetButton);
+        // adding the  line drawing button
+        topPanel.add(lineDraw);
+        //
+        topPanel.add(textDraw);
+        //
+        topPanel.add(importButton);
+        //
+        topPanel.add(restoreButton);
         // adds the top panel in the north of the jpanel
-
+        // could change to east or west depending on what you want
         mainContainer.add(topPanel, BorderLayout.NORTH);
 
 
@@ -477,15 +353,32 @@ public class Vid extends JFrame {
         mainContainer.add(canvas);
         // and the east panel to the main container
         // this could be changed to west or south depending on preferenece
-        mainContainer.add(eastPanel, BorderLayout.WEST);
+        mainContainer.add(eastPanel, BorderLayout.EAST);
 
     }
 
     public static void main(String[] args){
 
-        Vid window = new Vid(880, 640, "Sparkles project");
+        Vid window = new Vid(1000, 600, "Sparkles project");
         window.setVisible(true);
-        }
+        window.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
 
+                BufferedImage reloader = new BufferedImage(window.getCanvas().getWidth(), window.getCanvas().getHeight(), BufferedImage.TYPE_INT_RGB);
+                Graphics2D gg = reloader.createGraphics();
+                // and now I want to paint that object with what I have in the canvas
+                window.getCanvas().paint(gg);
+                try {
+                    // here we try to save the image under a png file
+                    ImageIO.write(reloader, "jpeg", new File("default.jpeg"));
+                } catch (IOException o) {
+                    o.printStackTrace();
+                }
+
+            }
+        });
     }
+}
 

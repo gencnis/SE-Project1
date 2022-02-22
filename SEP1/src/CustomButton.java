@@ -24,8 +24,5 @@ public class CustomButton extends JButton {
         this.setBackground(backColor);
         // foreground color (when the button gets clicked)
         this.setForeground(textColor);
-
-        this.setOpaque(true);
-        this.setBorderPainted(false);
     }
 }

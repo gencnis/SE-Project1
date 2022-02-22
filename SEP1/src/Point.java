@@ -16,8 +16,21 @@ public class Point {
         this.pointY = pointY;
     }
 
+    public int getPointX() {
+        return pointX;
+    }
+
+    public int getPointY() {
+        return pointY;
+    }
+
+    public int getPointR() {
+        return pointR;
+    }
+
     public void drawPoint(Graphics graphic){
         graphic.setColor(color);
+        //graphic.fillRect(pointX, pointY, pointR, pointR);
         graphic.fillOval(pointX, pointY, pointR, pointR);
     }
 }
