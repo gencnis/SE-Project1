@@ -199,23 +199,39 @@ public class Canvas extends JPanel  {
             //repaint();
             // if I do paint component, everything stays on the canvas, but it flicks with every click
             paintComponent(getGraphics());
-            } 
+            }
+            
             //NISA
             // checks if the pressed button is circle button.
             else if (currentShape.equals("circle")){
+                
                 // we get the x coordinate
                pointX = (int) (e.getX() - (90 / 2.0));
+                
                // and the y coordinate
                pointY = (int) (e.getY() - (90 / 2.0));
+               
+               // adds the new Ellipse(as a default circle) object to the array list we had for the shapes (circles and rectangles)
                circlesAndRectangles.add(new Ellipse2D.Double(pointX, pointY, 90, 90));
+                
+               // adds the current color to the shape color array list so all of the shapes do not change color at the same time
+               // it only effects the current shape unless the color is not changed
                shapeColors.add(currentColor);
             } 
             // checks if the pressed button is circle rectangle.
             else if (currentShape.equals("rectangle")){
+                
+               // we get the x coordinate
                pointX = e.getX() - (90 / 2);
+                
                // and the y coordinate
                pointY = e.getY() - (90 / 2);
+                
+               // adds the new Rectangle object to the array list we had for the shapes (circles and rectangles)
                circlesAndRectangles.add(new Rectangle(pointX, pointY, 90, 90));
+                
+               // adds the current color to the shape color array list so all of the shapes do not change color at the same time
+               // it only effects the current shape unless the color is not changed
                shapeColors.add(currentColor);
             } //NISA
         }
