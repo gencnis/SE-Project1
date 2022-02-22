@@ -22,8 +22,9 @@ public class Canvas extends JPanel  {
     // coordinates of points
     private int pointX, pointY, pointR;
 
+    //Current shape is a string because it will be used as a comparison element
     private String currentShape;
-    //
+
     HashMap<String, Integer[]> textCoordinates;
 
 
@@ -33,8 +34,12 @@ public class Canvas extends JPanel  {
     ArrayList<AllShapes> shapes;
     ArrayList<String> allText;
 
+    // Draw circle and rectangles feature
+    //adds the shapes to a list
     public ArrayList<Shape> circlesAndRectangles;
+    // adds colors to a list to match the shapes (so the shapes dont change color all together)
     public ArrayList<Color> shapeColors;
+    // is for the current color
     public Color currentColor;
 
     /**
@@ -53,12 +58,12 @@ public class Canvas extends JPanel  {
         pointList = new ArrayList<>();
         pointR = 5;
 
-        this.currentShape="pen";
+        this.currentShape="pen"; //for the pen button
         this.shapes = new ArrayList<>();
         this.allText = new ArrayList<>();
         this.textCoordinates = new HashMap<>();
-        this.circlesAndRectangles = new ArrayList<>();
-        this.shapeColors = new ArrayList<>();
+        this.circlesAndRectangles = new ArrayList<>(); //creates the list
+        this.shapeColors = new ArrayList<>(); //creates the list
         this.currentColor = currentColor;
     }
 
@@ -83,7 +88,7 @@ public class Canvas extends JPanel  {
         } //an arraylist for the shapes that can be drawn
         for (Shape circlesAndRectangle: circlesAndRectangles){
             g2.draw(circlesAndRectangle);
-        } // colors for the shapes
+        } // colors for the shapes, it goes through shapes and fills them with the current color
         for (int i=0; i<circlesAndRectangles.size();i++){
             g2.setColor(shapeColors.get(i));
             g2.fill(circlesAndRectangles.get(i));
@@ -161,14 +166,19 @@ public class Canvas extends JPanel  {
      * @param shape gets what shape was tried to be drawn
      */
     public void changeShape(String shape) {
+        // checks if the current shape is circle (which will be called if the circle button is pressed)
         if(shape.equals("circle")){
             currentShape = "circle";
             currentColor = penColor;
 
-        } else if(shape.equals("rectangle")){
+        } 
+        // checks if the current shape is rectangle (which will be called if the rectangle button is pressed)
+        else if(shape.equals("rectangle")){
             currentShape = "rectangle";
             currentColor = penColor;
-        } else {
+        } 
+        //if none above, it will set it to pen so it can be drawn
+        else {
             currentShape = "pen";
             currentColor = penColor;
         }
@@ -190,6 +200,7 @@ public class Canvas extends JPanel  {
             // if I do paint component, everything stays on the canvas, but it flicks with every click
             paintComponent(getGraphics());
             } 
+            //NISA
             // checks if the pressed button is circle button.
             else if (currentShape.equals("circle")){
                 // we get the x coordinate
@@ -206,13 +217,12 @@ public class Canvas extends JPanel  {
                pointY = e.getY() - (90 / 2);
                circlesAndRectangles.add(new Rectangle(pointX, pointY, 90, 90));
                shapeColors.add(currentColor);
-            }
+            } //NISA
         }
 
         @Override
         public void mouseReleased(MouseEvent e){;}
         
-
         @Override
         public void mouseClicked(MouseEvent e) {;}
 
