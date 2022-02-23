@@ -176,7 +176,7 @@ public class Canvas extends JPanel  {
         else if(shape.equals("rectangle")){
             currentShape = "rectangle";
             currentColor = penColor;
-        }
+        }// checks if the current shape is rotated rectangle (which will be called if the rotate rec button is pressed)
         else if(shape.equals("rotatedRect")){
             currentShape = "rotatedRect";
             currentColor = penColor;
